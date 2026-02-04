@@ -76,71 +76,6 @@ namespace Avril_FSD.ServerAssembly
 }
 ````
 
-### Execute Client.
-https://github.com/OpenFSD/Avril_Full_Stack_Development_Template/blob/master/APP_ClientAssembly/engine/Execute.cs
-````
-namespace Avril_FSD.ClientAssembly
-{
-    public class Execute
-    {
-.
-.
-.
-        public void Initialise_NetworkingPipes(Avril_FSD.ClientAssembly.Framework_Client obj)
-        {
-            Set_networking_Client(new Avril_FSD.ClientAssembly.Networking_Client());
-            Get_networking_Client().Initialise_networking_Client();
-        }
-
-        public void Initialise_Libraries()
-        {
-            programId_ConcurrentQue_C = Avril_FSD.Library_For_LaunchEnableForConcurrentThreadsAt_CLIENT.Initialise_LaunchEnableForConcurrentThreadsAt();
-            System.Console.WriteLine("created Library_For_LaunchEnableForConcurrentThreadsAt_CLIENT");
-
-            programId_WriteQue_C_IA = Avril_FSD.Library_For_WriteEnableForThreadsAt_CLIENTINPUTACTION.Initialise_WriteEnable();
-            System.Console.WriteLine("created Library_For_WriteEnableForThreadsAt_CLIENTINPUTACTION");
-
-            programId_WriteQue_C_OR = Avril_FSD.Library_For_WriteEnableForThreadsAt_CLIENTOUTPUTRECIEVE.Initialise_WriteEnable();
-            System.Console.WriteLine("created Library_For_WriteEnableForThreadsAt_CLIENTOUTPUTRECIEVE");
-
-        }
-        public void Initialise_Threads(Avril_FSD.ClientAssembly.Framework_Client obj)
-        {
-            byte threadIdCounter = 0;
-            obj.Get_client().Get_execute().Set_thread(threadIdCounter, Thread.CurrentThread);
-            obj.Get_client().Get_execute().Get_execute_Control().Set_flag_ThreadInitialised(obj, threadIdCounter, false);
-            System.Console.WriteLine("Thread Initalised => CurrentThread()" + (threadIdCounter).ToString());//TESTBENCH
-
-            threadIdCounter++;
-            obj.Get_client().Get_execute().Set_thread(threadIdCounter, new Thread(() => _networking_Client.Thread_IO_Client(threadIdCounter)));
-            obj.Get_client().Get_execute().Get_thread(threadIdCounter).Start();
-            System.Console.WriteLine("Thread Initalised => Thread_IO_Client on core " + (threadIdCounter).ToString());//TESTBENCH
-
-            threadIdCounter++;
-            while (threadIdCounter < obj.Get_client().Get_global().Get_numberOfCores())
-            {
-                obj.Get_client().Get_execute().Set_thread(threadIdCounter, new Thread(() => obj.Get_client().Get_algorithms().Get_concurrent((byte)(threadIdCounter - (byte)2)).Thread_Concurrent(threadIdCounter)));
-                obj.Get_client().Get_execute().Get_thread(threadIdCounter).Start();
-                System.Console.WriteLine("Thread Initalised => Thread_Concurrent on core " + (threadIdCounter).ToString());//TESTBENCH
-                threadIdCounter++;
-            }
-        }
-
-        public void Create_And_Run_Graphics(Avril_FSD.ClientAssembly.Framework_Client obj)
-        {
-            System.Console.WriteLine("starting = > gameInstance");//TESTBENCH
-            using (Avril_FSD.ClientAssembly.Game_Instance gameInstance = new Avril_FSD.ClientAssembly.Game_Instance())
-            {
-                gameInstance.Run(obj.Get_client().Get_data().Get_settings().Get_refreshRate());
-            }
-        }
-.
-.
-.
-    }   
-}
-````
-
 #### Loading Server Shell Framework.
 https://github.com/OpenFSD/Avril_Full_Stack_Development_Template/blob/master/APP_ServerAssembly/gameInstance/Game_Instance.cs
 ````
@@ -228,6 +163,71 @@ namespace Avril_FSD.ServerAssembly
 ````
 
 ### Client Shell App.
+
+### Execute Client.
+https://github.com/OpenFSD/Avril_Full_Stack_Development_Template/blob/master/APP_ClientAssembly/engine/Execute.cs
+````
+namespace Avril_FSD.ClientAssembly
+{
+    public class Execute
+    {
+.
+.
+.
+        public void Initialise_NetworkingPipes(Avril_FSD.ClientAssembly.Framework_Client obj)
+        {
+            Set_networking_Client(new Avril_FSD.ClientAssembly.Networking_Client());
+            Get_networking_Client().Initialise_networking_Client();
+        }
+
+        public void Initialise_Libraries()
+        {
+            programId_ConcurrentQue_C = Avril_FSD.Library_For_LaunchEnableForConcurrentThreadsAt_CLIENT.Initialise_LaunchEnableForConcurrentThreadsAt();
+            System.Console.WriteLine("created Library_For_LaunchEnableForConcurrentThreadsAt_CLIENT");
+
+            programId_WriteQue_C_IA = Avril_FSD.Library_For_WriteEnableForThreadsAt_CLIENTINPUTACTION.Initialise_WriteEnable();
+            System.Console.WriteLine("created Library_For_WriteEnableForThreadsAt_CLIENTINPUTACTION");
+
+            programId_WriteQue_C_OR = Avril_FSD.Library_For_WriteEnableForThreadsAt_CLIENTOUTPUTRECIEVE.Initialise_WriteEnable();
+            System.Console.WriteLine("created Library_For_WriteEnableForThreadsAt_CLIENTOUTPUTRECIEVE");
+
+        }
+        public void Initialise_Threads(Avril_FSD.ClientAssembly.Framework_Client obj)
+        {
+            byte threadIdCounter = 0;
+            obj.Get_client().Get_execute().Set_thread(threadIdCounter, Thread.CurrentThread);
+            obj.Get_client().Get_execute().Get_execute_Control().Set_flag_ThreadInitialised(obj, threadIdCounter, false);
+            System.Console.WriteLine("Thread Initalised => CurrentThread()" + (threadIdCounter).ToString());//TESTBENCH
+
+            threadIdCounter++;
+            obj.Get_client().Get_execute().Set_thread(threadIdCounter, new Thread(() => _networking_Client.Thread_IO_Client(threadIdCounter)));
+            obj.Get_client().Get_execute().Get_thread(threadIdCounter).Start();
+            System.Console.WriteLine("Thread Initalised => Thread_IO_Client on core " + (threadIdCounter).ToString());//TESTBENCH
+
+            threadIdCounter++;
+            while (threadIdCounter < obj.Get_client().Get_global().Get_numberOfCores())
+            {
+                obj.Get_client().Get_execute().Set_thread(threadIdCounter, new Thread(() => obj.Get_client().Get_algorithms().Get_concurrent((byte)(threadIdCounter - (byte)2)).Thread_Concurrent(threadIdCounter)));
+                obj.Get_client().Get_execute().Get_thread(threadIdCounter).Start();
+                System.Console.WriteLine("Thread Initalised => Thread_Concurrent on core " + (threadIdCounter).ToString());//TESTBENCH
+                threadIdCounter++;
+            }
+        }
+
+        public void Create_And_Run_Graphics(Avril_FSD.ClientAssembly.Framework_Client obj)
+        {
+            System.Console.WriteLine("starting = > gameInstance");//TESTBENCH
+            using (Avril_FSD.ClientAssembly.Game_Instance gameInstance = new Avril_FSD.ClientAssembly.Game_Instance())
+            {
+                gameInstance.Run(obj.Get_client().Get_data().Get_settings().Get_refreshRate());
+            }
+        }
+.
+.
+.
+    }   
+}
+````
 
 #### Loading Client Shell Framwork - Scanner For Mouse and Keyboard.
 https://github.com/OpenFSD/Avril_Full_Stack_Development_Template/blob/master/APP_ClientAssembly/gameInstance/Game_Instance.cs
